@@ -3,6 +3,19 @@ from sqlalchemy import Column, Integer, String, Float, DateTime
 from .database import Base
 from datetime import datetime
 
+
+
+#Создание таблицы пользователей в БД
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nickname = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, default="user")
+
+
+#Создание таблицы мероприятий в БД
 class Event(Base):
     __tablename__ = "events"
 

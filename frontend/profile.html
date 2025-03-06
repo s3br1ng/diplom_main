@@ -1,0 +1,61 @@
+<!-- frontend/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="profile.html" class="nav-button">Профиль</a>
+        <a href="events.html" class="nav-button">Мероприятия</a>
+    </div>
+
+    <div class="centered-container">
+        <h1>Профиль</h1>
+        <p id="user-info"></p>
+        <button onclick="logout()">Выйти</button>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html'; // Если нет токена, переходим на страницу входа
+        } else {
+            console.log("Token:", token); // Логируем токен
+        }
+        
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/profile', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` } // Передаем токен
+                });
+        
+                console.log("Server Response Status:", response.status); // Логируем статус ответа сервера
+                if (response.ok) {
+                    const user = await response.json();
+                    console.log("User Data:", user); // Логируем данные пользователя
+                    document.getElementById('user-info').textContent = `ID: ${user.id}, Никнейм: ${user.nickname}`;
+                } else {
+                    const error = await response.json();
+                    console.error("Server Error:", error); // Логируем ошибку сервера
+                    document.getElementById('user-info').textContent = error.detail || 'Не удалось загрузить информацию о профиле.';
+                }
+            } catch (err) {
+                document.getElementById('user-info').textContent = 'Произошла ошибка при загрузке данных.';
+                console.error("Fetch Error:", err); // Логируем ошибку fetch
+            }
+        }
+        
+        loadUserInfo(); // Загружаем информацию о пользователе при открытии страницы
+        
+        function logout() {
+            localStorage.removeItem('token'); // Удаляем токен
+            window.location.href = 'login.html'; // Переходим на страницу входа
+        }
+        </script>
+</body>
+</html>

@@ -3,18 +3,21 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
+#Модель для создания мероприятия
 class EventBase(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
+    name: str
     lat: float
     lon: float
     city_id: int
-    description: str = Field(min_length=1, max_length=500)
-    status: str = "active"
+    description: str
+    status: str
 
+#Модель для создания мероприятия
 class EventCreate(EventBase):
     pass
 
-class EventUpdate(BaseModel):  # Новая модель для частичного обновления
+#Модель для обновления данных мероприятия
+class EventUpdate(BaseModel):
     name: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
@@ -26,4 +29,21 @@ class EventResponse(EventBase):
     id: int
     date: datetime
 
-    model_config = {"from_attributes": True}
+#Модель для регистрации нового пользователя
+class UserCreate(BaseModel):
+    nickname: str
+    password: str = Field(min_length=6)
+
+#Модель для входа пользователя
+class UserLogin(BaseModel):
+    nickname: str
+    password: str
+
+#Модель для получения токена и его типа
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserProfile(BaseModel):
+    id: int
+    nickname: str

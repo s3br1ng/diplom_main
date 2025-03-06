@@ -1,0 +1,57 @@
+<!-- frontend/events.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мероприятия</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="profile.html" class="nav-button">Профиль</a>
+        <a href="events.html" class="nav-button">Мероприятия</a>
+    </div>
+
+    <div class="centered-container">
+        <h1>Список мероприятий</h1>
+        <ul id="events-list"></ul>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html'; // Если нет токена, переходим на страницу входа
+        }
+        
+        async function loadEvents() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/events', {  // Правильный URL
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+        
+                if (response.ok) {
+                    const events = await response.json();
+                    const list = document.getElementById('events-list');
+                    list.innerHTML = ''; // Очищаем список
+        
+                    events.forEach(event => {
+                        const li = document.createElement('li');
+                        li.textContent = `${event.name} ${event.city_id} ${event.date} ${event.description} ${event.name}`;
+                        list.appendChild(li);
+                    });
+                } else {
+                    document.getElementById('events-list').textContent = 'Не удалось загрузить мероприятия.';
+                }
+            } catch (err) {
+                document.getElementById('events-list').textContent = 'Произошла ошибка при загрузке данных.';
+                console.error(err); // Выводим ошибку в консоль браузера
+            }
+        }
+        
+        loadEvents(); // Загружаем мероприятия при открытии страницы
+        </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!-- frontend/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="centered-container">
+        <h1>Вход</h1>
+        <form id="login-form">
+            <input type="text" id="nickname" placeholder="Никнейм" required><br><br>
+            <input type="password" id="password" placeholder="Пароль" required><br><br>
+            <button type="submit">Войти</button>
+        </form>
+        <p id="message"></p>
+        <a href="index.html" class="button">Назад</a>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value;
+            const password = document.getElementById('password').value;
+        
+            try {
+                const response = await fetch('http://127.0.0.1:8000/login', {  // Правильный URL
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nickname, password })
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = 'profile.html';
+                } else {
+                    const error = await response.json();
+                    document.getElementById('message').textContent = error.detail || 'Неверный никнейм или пароль';
+                }
+            } catch (err) {
+                document.getElementById('message').textContent = 'Произошла ошибка при входе.';
+                console.error(err); // Выводим ошибку в консоль браузера
+            }
+        });
+        </script>
+</body>
+</html>

@@ -1,12 +1,32 @@
 # backend/crud.py
 from sqlalchemy.orm import Session
 from . import models, schemas
-import logging
+from passlib.context import CryptContext
 
-logger = logging.getLogger(__name__)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def get_events(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Event).offset(skip).limit(limit).all()
+def get_user_by_nickname(db: Session, nickname: str):
+    return db.query(models.User).filter(models.User.nickname == nickname).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    hashed_password = pwd_context.hash(user.password)  # Хэширование
+    db_user = models.User(nickname=user.nickname, password_hash=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def authenticate_user(db: Session, nickname: str, password: str):
+    user = get_user_by_nickname(db, nickname)
+    if not user or not verify_password(password, user.password_hash):
+        return None
+    return user
+
+def get_events(db: Session):
+    return db.query(models.Event)
 
 def create_event(db: Session, event: schemas.EventCreate):
     db_event = models.Event(**event.model_dump())
@@ -18,7 +38,7 @@ def create_event(db: Session, event: schemas.EventCreate):
 def get_event_by_id(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
-def update_event_partial(db: Session, event_id: int, updated_data: schemas.EventUpdate):
+def update_event(db: Session, event_id: int, updated_data: schemas.EventUpdate):
     db_event = get_event_by_id(db, event_id)
     if not db_event:
         return None
@@ -29,7 +49,6 @@ def update_event_partial(db: Session, event_id: int, updated_data: schemas.Event
 
     db.commit()
     db.refresh(db_event)
-    logger.info(f"Event {event_id} updated with data: {update_data}")
     return db_event
 
 def delete_event(db: Session, event_id: int):
