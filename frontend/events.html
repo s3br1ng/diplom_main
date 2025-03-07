@@ -1,4 +1,3 @@
-<!-- frontend/events.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,12 +21,12 @@
     <script>
         const token = localStorage.getItem('token');
         if (!token) {
-            window.location.href = 'login.html'; // Если нет токена, переходим на страницу входа
+            window.location.href = 'login.html';
         }
         
         async function loadEvents() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/events', {  // Правильный URL
+                const response = await fetch('http://127.0.0.1:8000/events', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -35,7 +34,7 @@
                 if (response.ok) {
                     const events = await response.json();
                     const list = document.getElementById('events-list');
-                    list.innerHTML = ''; // Очищаем список
+                    list.innerHTML = '';
         
                     events.forEach(event => {
                         const li = document.createElement('li');
@@ -47,11 +46,11 @@
                 }
             } catch (err) {
                 document.getElementById('events-list').textContent = 'Произошла ошибка при загрузке данных.';
-                console.error(err); // Выводим ошибку в консоль браузера
+                console.error(err);
             }
         }
         
-        loadEvents(); // Загружаем мероприятия при открытии страницы
+        loadEvents();
         </script>
 </body>
 </html>

@@ -1,6 +1,3 @@
-# backend/main.py
-
-
 # backend/.venv/Scripts/Activate.ps1
 # uvicorn backend.main:app --reload
 
@@ -23,7 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 #Создает новую сессию базы данных, для работы запросов с дб, потом закрывает
 def get_db():
@@ -86,25 +82,7 @@ def update_event(
     updated_event = crud.update_event(db=db, event_id=event_id, updated_data=updated_data)
     return updated_event
 
-
-
 #Вывод информации о профиле
 @app.get("/profile", response_model=schemas.UserProfile)
 def get_profile(current_user: models.User = Depends(get_current_user)):
     return {"id": current_user.id, "nickname": current_user.nickname}
-
-
-#Функция для расшифровки токена и получения информации и профиле
-async def get_current_user(token: str = Depends(auth.decode_access_token), db: Session = Depends(get_db)):
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-    nickname = token.get("nickname")
-    if not nickname:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
-
-    user = crud.get_user_by_nickname(db, nickname)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-
-    return user

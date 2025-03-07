@@ -1,4 +1,3 @@
-<!-- frontend/profile.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,39 +21,39 @@
     <script>
         const token = localStorage.getItem('token');
         if (!token) {
-            window.location.href = 'login.html'; // Если нет токена, переходим на страницу входа
+            window.location.href = 'login.html';
         } else {
-            console.log("Token:", token); // Логируем токен
+            console.log("Token:", token);
         }
         
         async function loadUserInfo() {
             try {
                 const response = await fetch('http://127.0.0.1:8000/profile', {
                     method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` } // Передаем токен
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
         
-                console.log("Server Response Status:", response.status); // Логируем статус ответа сервера
+                console.log("Server Response Status:", response.status);
                 if (response.ok) {
                     const user = await response.json();
-                    console.log("User Data:", user); // Логируем данные пользователя
+                    console.log("User Data:", user);
                     document.getElementById('user-info').textContent = `ID: ${user.id}, Никнейм: ${user.nickname}`;
                 } else {
                     const error = await response.json();
-                    console.error("Server Error:", error); // Логируем ошибку сервера
+                    console.error("Server Error:", error);
                     document.getElementById('user-info').textContent = error.detail || 'Не удалось загрузить информацию о профиле.';
                 }
             } catch (err) {
                 document.getElementById('user-info').textContent = 'Произошла ошибка при загрузке данных.';
-                console.error("Fetch Error:", err); // Логируем ошибку fetch
+                console.error("Fetch Error:", err);
             }
         }
         
-        loadUserInfo(); // Загружаем информацию о пользователе при открытии страницы
+        loadUserInfo();
         
         function logout() {
-            localStorage.removeItem('token'); // Удаляем токен
-            window.location.href = 'login.html'; // Переходим на страницу входа
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
         }
         </script>
 </body>
