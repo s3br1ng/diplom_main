@@ -10,7 +10,7 @@ def get_user_by_nickname(db: Session, nickname: str):
     return db.query(models.User).filter(models.User.nickname == nickname).first()
 
 #Создание нового пользователя в бд
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserLogin):
     hashed_password = pwd_context.hash(user.password)
     db_user = models.User(nickname=user.nickname, password_hash=hashed_password)
     db.add(db_user)
@@ -34,7 +34,7 @@ def get_events(db: Session):
     return db.query(models.Event)
 
 #Создает новое мероприятие
-def create_event(db: Session, event: schemas.EventCreate):
+def create_event(db: Session, event: schemas.EventBase):
     db_event = models.Event(**event.model_dump())
     db.add(db_event)
     db.commit()

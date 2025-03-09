@@ -4,16 +4,14 @@ from datetime import datetime
 
 #Модель для создания мероприятия
 class EventBase(BaseModel):
+    id: int
     name: str
     lat: float
     lon: float
     city_id: int
     description: str
     status: str
-
-#Модель для создания мероприятия
-class EventCreate(EventBase):
-    pass
+    date: datetime
 
 #Модель для обновления данных мероприятия
 class EventUpdate(BaseModel):
@@ -24,25 +22,18 @@ class EventUpdate(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
 
-class EventResponse(EventBase):
-    id: int
-    date: datetime
-
-#Модель для регистрации нового пользователя
-class UserCreate(BaseModel):
-    nickname: str
-    password: str = Field(min_length=6)
 
 #Модель для входа пользователя
 class UserLogin(BaseModel):
     nickname: str
-    password: str
+    password: str = Field(min_length=6)
 
 #Модель для получения токена и его типа
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+#Модель для получения информации о профиле
 class UserProfile(BaseModel):
     id: int
     nickname: str

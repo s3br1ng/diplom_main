@@ -38,7 +38,7 @@
         
                     events.forEach(event => {
                         const li = document.createElement('li');
-                        li.textContent = `${event.name} ${event.city_id} ${event.date} ${event.description} ${event.name}`;
+                        li.textContent = `${event.id} ${event.name} ${event.city_id} ${event.date} ${event.description} ${event.name}`;
                         list.appendChild(li);
                     });
                 } else {

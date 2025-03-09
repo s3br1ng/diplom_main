@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="nav-bar">
-        <a href="profile.html" class="nav-button">Профиль</a>
-        <a href="events.html" class="nav-button">Мероприятия</a>
+        <a href="profile.html?token=${token}" class="nav-button">Профиль</a>
+        <a href="events.html?token=${token}" class="nav-button">Мероприятия</a>
     </div>
 
     <div class="centered-container">
@@ -22,39 +22,30 @@
         const token = localStorage.getItem('token');
         if (!token) {
             window.location.href = 'login.html';
-        } else {
-            console.log("Token:", token);
         }
-        
+
         async function loadUserInfo() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/profile', {
+                const response = await fetch(`http://127.0.0.1:8000/profile?token=${token}`, {
                     method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { 'Content-Type': 'application/json' }
                 });
-        
-                console.log("Server Response Status:", response.status);
+
                 if (response.ok) {
                     const user = await response.json();
-                    console.log("User Data:", user);
-                    document.getElementById('user-info').textContent = `ID: ${user.id}, Никнейм: ${user.nickname}`;
-                } else {
-                    const error = await response.json();
-                    console.error("Server Error:", error);
-                    document.getElementById('user-info').textContent = error.detail || 'Не удалось загрузить информацию о профиле.';
-                }
+                    document.getElementById('user-info').textContent = `ID: ${user.id}, Никнейм: ${user.nickname}`;}
             } catch (err) {
                 document.getElementById('user-info').textContent = 'Произошла ошибка при загрузке данных.';
-                console.error("Fetch Error:", err);
+                console.error(err);
             }
         }
-        
+
         loadUserInfo();
-        
+
         function logout() {
             localStorage.removeItem('token');
             window.location.href = 'login.html';
         }
-        </script>
+    </script>
 </body>
 </html>
